@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 
-#define FOR(nombre, inicio, fin) for (int nombre = inicio; nombre < fin; nombre++)
+#define FOR(nombre, inicio, fin) for (unsigned int nombre = inicio; nombre < fin; nombre++)
 #define leer_variable(tipo, nombre) \
   tipo nombre;                      \
   std::cin >> nombre
@@ -12,9 +12,8 @@
   int t;              \
   std::cin >> t;      \
   while (t--)
-#define leer_variables_hasta_eof(patron, ...) while (scanf(patron, ##__VA_ARGS__) != EOF)
+#define leer_variables_hasta_eof(patron, ...) while (scanf(patron,__VA_ARGS__) != EOF)
 
-// EOF = End Of File
 using namespace std;
 int main()
 {
