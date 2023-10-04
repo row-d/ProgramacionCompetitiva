@@ -38,6 +38,7 @@ Este repositorio contiene algoritmos y utilidades para programación competitiva
 ```
 
 ### Redireccionar entrada y salida a archivos
+
 Si la variable `ONLINE_JUDGE` no está definida, redirecciona la entrada y salida estandar a los archivos `input.txt` y `output.txt` respectivamente. Esto nos permite probar nuestro codigo con casos de prueba personalizados y ahorrarnos el tiempo de escribirlos en la entrada estandar cada vez que queramos probar nuestro codigo.
 
 ```cpp
@@ -55,6 +56,7 @@ std::getline(std::cin, line);
 ```
 
 ## Macros
+
 Las macros son fragmentos de codigo que se reemplazan en tiempo de precompilacion.
 
 Nos sirve para automatizar tareas repetitivas, permitiendo asi el enfoque a la solucion del problema.
@@ -77,6 +79,7 @@ FOR(i, 0, 10) {
 ```
 
 ### Leer una variable
+
 Define una variable y lee su valor desde la entrada estandar
 
 ```cpp
@@ -93,6 +96,7 @@ std::cout << n << std::endl;
 ```
 
 ### Leer un arreglo
+
 Define un arreglo de tamaño n y lee sus valores desde la entrada estandar
 
 ```cpp
@@ -109,7 +113,7 @@ leer_arreglo(int, a, 5);
 FOR(i, 0, 5) {
   std::cout << a[i] << std::endl;
 }
-```	
+```
 
 ### Leer casos de prueba
 
@@ -175,6 +179,7 @@ sort(v.begin(), v.end(), cmp);
 ```
 
 ### Permutar un vector/string
+
 En cada iteracion del ciclo `do while` se permuta el vector/string a su siguiente permutacion, cuando ya no se puede permutar mas, `std::next_permutation` retorna `false` y el ciclo termina.
 
 ```cpp
@@ -188,12 +193,84 @@ do {
 ### Grafos
 
 #### Busqueda en Amplitud (BFS)
-⚠️ Revisar
+
+El algoritmo de busqueda en amplitud es un algoritmo que permite recorrer o buscar elementos en un grafo.
+
+La busqueda se realiza por niveles, es decir, primero se visitan todos los nodos adyacentes al nodo inicial, luego los nodos adyacentes de los nodos adyacentes y asi sucesivamente.
 
 ```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+typedef int nodo;
+typedef unsigned int peso;
+typedef vector<peso> distancias;
+typedef vector<vector<nodo>> adj_list;
+
+vector<nodo> bfs(nodo inicio, adj_list grafo, size_t N)
+{
+  queue<nodo> cola;
+  vector<bool> visitado(N, false);
+  vector<nodo> predecesor(N, -1);
+
+  visitado[inicio] = true;
+  cola.push(inicio);
+
+  while (!cola.empty())
+  {
+    nodo actual = cola.front();
+    cola.pop();
+
+    for (auto vecino : grafo[actual])
+    {
+      if (!visitado[vecino])
+      {
+        visitado[vecino] = true;
+        predecesor[vecino] = actual;
+        cola.push(vecino);
+      }
+    }
+  }
+
+  return predecesor;
+}
+```
+
+Ejemplo:
+  
+```mermaid
+graph LR
+  0((0)) --- 1((1))
+  1 --- 2((2)) & 3((3))
+  2 --- 3 & 4
+  3 --- 4((4)) & 5((5))
+```
+
+```cpp
+  adj_list graph = {
+    {1}, // 0 -> [1]
+    {0, 2, 3}, // 1 -> [0, 2, 3]
+    {1, 3, 4}, // 2 -> [1, 3, 4]
+    {1, 2, 4, 5}, // 3 -> [1, 2, 4, 5]
+    {2, 3, 5}, // 4 -> [2, 3, 5]
+    {3, 4}, // 5 -> [3, 4]
+  };
+
+  vector<nodo> predecesor = bfs(0, graph, graph.size());
+
+  // ruta de 0 a 5
+  nodo actual = 5;
+
+  while (actual != -1)
+  {
+    cout << actual << " <- ";
+    actual = predecesor[actual];
+  }
 ```
 
 #### Busqueda en Profundidad (DFS)
+
 ⚠️ Revisar
 
 ```cpp
@@ -204,37 +281,40 @@ do {
 El algoritmo de Dijkstra permite encontrar la ruta mas corta entre un nodo inicial y todos los demas nodos de un grafo con pesos no negativos.
 
 Parametros:
+
 - `start`: nodo inicial
 - `graph`: lista de adyacencia
 - `N`: numero de nodos
 
 Retorna:
+
 - `dist`: vector de distancias
 - `predecesor`: vector de predecesores
-
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
 
+
 typedef int nodo;
-typedef int peso;
-typedef pair<nodo, nodo> arista;
+typedef unsigned int peso;
 typedef vector<peso> distancias;
 typedef pair<peso, nodo> adj_el;
 typedef vector<vector<adj_el>> adj_list;
 typedef priority_queue<adj_el, vector<adj_el>, greater<adj_el>> pq;
 
-pair<distancias, vector<nodo>> dijkstra(nodo start, adj_list graph, size_t N)
+const peso INF = std::numeric_limits<peso>::max();
+
+pair<distancias, vector<nodo>> dijkstra(nodo inicio, adj_list grafo, size_t N)
 {
   pq cola;
   vector<bool> visitado(N, false);
-  distancias dist(N, INT_MAX);
+  distancias dist(N, INF);
   vector<nodo> predecesor(N, -1);
 
-  visitado[start] = true;
-  dist[start] = 0;
-  cola.push(adj_el(0, start));
+  visitado[inicio] = true;
+  dist[inicio] = 0;
+  cola.push(adj_el(0, inicio));
 
   while (!cola.empty())
   {
@@ -246,7 +326,7 @@ pair<distancias, vector<nodo>> dijkstra(nodo start, adj_list graph, size_t N)
     if (uw != dist[u])
       continue;
 
-    for (adj_el vecino : graph[u])
+    for (adj_el vecino : grafo[u])
     {
       nodo v = vecino.second;
       peso vw = vecino.first;
@@ -266,10 +346,9 @@ Ejemplo:
 
 ```mermaid
 graph LR
-0 --1--> 1
-0 --2--> 2
-1 --1--> 0
-1 --3--> 3
+0((0)) --1--- 1((1))
+0 --2--> 2((2))
+1 --3--> 3((3))
 2 --1--> 0
 2 --3--> 3
 3 --1--> 1
@@ -304,6 +383,7 @@ while (u != -1)
 ```
 
 #### Prim
+
 ⚠️ Revisar
 
 ```cpp

@@ -15,7 +15,6 @@ using std::vector;
 
 typedef int nodo;
 typedef unsigned int peso;
-typedef pair<nodo, nodo> arista;
 typedef vector<peso> distancias;
 typedef pair<peso, nodo> adj_el;
 typedef vector<vector<adj_el>> adj_list;
@@ -23,16 +22,16 @@ typedef priority_queue<adj_el, vector<adj_el>, greater<adj_el>> pq;
 
 const peso INF = std::numeric_limits<peso>::max();
 
-pair<distancias, vector<nodo>> dijkstra(nodo start, adj_list graph, size_t N)
+pair<distancias, vector<nodo>> dijkstra(nodo inicio, adj_list grafo, size_t N)
 {
   pq cola;
   vector<bool> visitado(N, false);
   distancias dist(N, INF);
   vector<nodo> predecesor(N, -1);
 
-  visitado[start] = true;
-  dist[start] = 0;
-  cola.push(adj_el(0, start));
+  visitado[inicio] = true;
+  dist[inicio] = 0;
+  cola.push(adj_el(0, inicio));
 
   while (!cola.empty())
   {
@@ -44,7 +43,7 @@ pair<distancias, vector<nodo>> dijkstra(nodo start, adj_list graph, size_t N)
     if (uw != dist[u])
       continue;
 
-    for (adj_el vecino : graph[u])
+    for (adj_el vecino : grafo[u])
     {
       nodo v = vecino.second;
       peso vw = vecino.first;
