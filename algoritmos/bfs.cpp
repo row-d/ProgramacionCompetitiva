@@ -3,8 +3,6 @@
 using namespace std;
 
 typedef int nodo;
-typedef unsigned int peso;
-typedef vector<peso> distancias;
 typedef vector<vector<nodo>> adj_list;
 
 vector<nodo> bfs(nodo inicio, adj_list grafo, size_t N)
