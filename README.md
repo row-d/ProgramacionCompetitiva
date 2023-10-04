@@ -251,8 +251,8 @@ graph LR
     {0, 2, 3}, // 1 -> [0, 2, 3]
     {1, 3, 4}, // 2 -> [1, 3, 4]
     {1, 2, 4, 5}, // 3 -> [1, 2, 4, 5]
-    {2, 3, 5}, // 4 -> [2, 3, 5]
-    {3, 4}, // 5 -> [3, 4]
+    {2, 3}, // 4 -> [2, 3]
+    {3}, // 5 -> [3]
   };
 
   vector<nodo> predecesor = bfs(0, graph, graph.size());
@@ -267,12 +267,114 @@ graph LR
   }
 ```
 
+---
+
 #### Busqueda en Profundidad (DFS)
 
-⚠️ Revisar
+Version imperativa
 
 ```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+typedef int nodo;
+typedef vector<vector<nodo>> adj_list;
+
+vector<nodo> dfs(nodo inicio, adj_list grafo, size_t N)
+{
+  stack<nodo> pila;
+  vector<bool> visitado(N, false);
+  vector<nodo> predecesor(N, -1);
+
+  visitado[inicio] = true;
+  pila.push(inicio);
+
+  while (!pila.empty())
+  {
+    nodo u = pila.top();
+    pila.pop();
+
+    for (nodo v : grafo[u])
+    {
+      if (!visitado[v])
+      {
+        visitado[v] = true;
+        pila.push(v);
+        predecesor[v] = u;
+      }
+    }
+  }
+  return predecesor;
+}
 ```
+
+Version recursiva
+
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+typedef int nodo;
+typedef vector<vector<nodo>> adj_list;
+vector<nodo> dfs_recursive(nodo inicio, adj_list grafo, size_t N)
+{
+
+  vector<bool> visitado(N, false);
+  vector<nodo> predecesor(N, -1);
+
+  function<void(nodo)> iterar_nodo = [&](nodo u)
+  {
+    visitado[u] = true;
+    for (nodo v : grafo[u])
+    {
+      if (!visitado[v])
+      {
+        predecesor[v] = u;
+        iterar_nodo(v);
+      }
+    }
+  };
+
+  iterar_nodo(inicio);
+  return predecesor;
+}
+```
+
+Ejemplo:
+  
+```mermaid
+graph LR
+  0((0)) --- 1((1))
+  1 --- 2((2)) & 3((3))
+  2 --- 3 & 4
+  3 --- 4((4)) & 5((5))
+```
+
+```cpp
+  adj_list graph = {
+    {1}, // 0 -> [1]
+    {0, 2, 3}, // 1 -> [0, 2, 3]
+    {1, 3, 4}, // 2 -> [1, 3, 4]
+    {1, 2, 4, 5}, // 3 -> [1, 2, 4, 5]
+    {2, 3}, // 4 -> [2, 3]
+    {3}, // 5 -> [3]
+  };
+
+  vector<nodo> predecesor = dfs(0, graph, graph.size());
+
+  // ruta de 0 a 5
+  nodo actual = 5;
+
+  while (actual != -1)
+  {
+    cout << actual << " <- ";
+    actual = predecesor[actual];
+  }
+```
+
+---
 
 #### Dijkstra
 
