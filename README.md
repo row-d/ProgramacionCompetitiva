@@ -200,9 +200,107 @@ do {
 ```
 
 #### Dijkstra
-⚠️ Revisar
+
+El algoritmo de Dijkstra permite encontrar la ruta mas corta entre un nodo inicial y todos los demas nodos de un grafo con pesos no negativos.
+
+Parametros:
+- `start`: nodo inicial
+- `graph`: lista de adyacencia
+- `N`: numero de nodos
+
+Retorna:
+- `dist`: vector de distancias
+- `predecesor`: vector de predecesores
+
 
 ```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef int nodo;
+typedef int peso;
+typedef pair<nodo, nodo> arista;
+typedef vector<peso> distancias;
+typedef pair<peso, nodo> adj_el;
+typedef vector<vector<adj_el>> adj_list;
+typedef priority_queue<adj_el, vector<adj_el>, greater<adj_el>> pq;
+
+pair<distancias, vector<nodo>> dijkstra(nodo start, adj_list graph, size_t N)
+{
+  pq cola;
+  vector<bool> visitado(N, false);
+  distancias dist(N, INT_MAX);
+  vector<nodo> predecesor(N, -1);
+
+  visitado[start] = true;
+  dist[start] = 0;
+  cola.push(adj_el(0, start));
+
+  while (!cola.empty())
+  {
+    adj_el el = cola.top();
+    nodo u = el.second;
+    peso uw = el.first;
+    cola.pop();
+
+    if (uw != dist[u])
+      continue;
+
+    for (adj_el vecino : graph[u])
+    {
+      nodo v = vecino.second;
+      peso vw = vecino.first;
+      if (dist[u] + vw < dist[v])
+      {
+        dist[v] = dist[u] + vw;
+        cola.push(adj_el(dist[v], v));
+        predecesor[v] = u;
+      }
+    }
+  }
+  return make_pair(dist, predecesor);
+}
+```
+
+Ejemplo:
+
+```mermaid
+graph LR
+0 --1--> 1
+0 --2--> 2
+1 --1--> 0
+1 --3--> 3
+2 --1--> 0
+2 --3--> 3
+3 --1--> 1
+3 --2--> 2
+```
+  
+```cpp
+// nodo -> [...(peso, nodo)]
+adj_list graph = {
+  {adj_el(1, 1), adj_el(2, 2)}, // 0 -> [ (w:1, v:1), (w:2, v:2) ]
+  {adj_el(1, 0), adj_el(3, 3)}, // 1 -> [ (w:1, v:0), (w:3, v:3) ]
+  {adj_el(1, 0), adj_el(3, 3)}, // 2 -> [ (w:1, v:0), (w:3, v:3) ]
+  {adj_el(1, 1), adj_el(2, 2)}, // 3 -> [ (w:1, v:1), (w:2, v:2) ]
+};
+
+pair<distancias, vector<nodo>> res = dijkstra(0, graph, graph.size());
+
+distancias dist = res.first;
+vector<nodo> predecesor = res.second;
+
+// distancia de 0 a 3
+cout << dist[3] << endl;
+
+// ruta de 0 a 3
+nodo u = 3;
+while (u != -1)
+{
+  cout << u << " ";
+  u = predecesor[u];
+}
+
 ```
 
 #### Prim
