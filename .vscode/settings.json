@@ -81,5 +81,13 @@
     "valarray": "cpp",
     "ranges": "cpp",
     "span": "cpp"
+  },
+  "markdown.extension.toc.omittedFromToc": {
+    "README.md": [
+      "## Table of Contents",
+      "## Indice",
+      "## Index",
+      "# Programacion Competitiva"
+    ]
   }
 }

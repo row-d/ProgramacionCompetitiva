@@ -8,20 +8,17 @@ Este repositorio contiene algoritmos y utilidades para programación competitiva
   - [Incluir todas las bibliotecas](#incluir-todas-las-bibliotecas)
   - [Redireccionar entrada y salida a archivos](#redireccionar-entrada-y-salida-a-archivos)
   - [Leer una linea](#leer-una-linea)
-
 - [Macros](#macros)
   - [For loop mas común](#for-loop-mas-común)
   - [Leer una variable](#leer-una-variable)
   - [Leer un arreglo](#leer-un-arreglo)
   - [Leer casos de prueba](#leer-casos-de-prueba)
   - [Leer variables hasta que termine la entrada](#leer-variables-hasta-que-termine-la-entrada)
-
 - [Tecnicas](#tecnicas)
   - [Ordenar un vector/string en orden ascendente/lexicografico](#ordenar-un-vectorstring-en-orden-ascendentelexicografico)
   - [Ordenar un vector en orden descendente](#ordenar-un-vector-en-orden-descendente)
   - [Ordenar un vector/string de forma personalizada](#ordenar-un-vectorstring-de-forma-personalizada)
   - [Permutar un vector/string](#permutar-un-vectorstring)
-
 - [Algoritmos](#algoritmos)
   - [Grafos](#grafos)
     - [Busqueda en Amplitud (BFS)](#busqueda-en-amplitud-bfs)
@@ -188,11 +185,83 @@ do {
 } while (std::next_permutation(v.begin(), v.end()));
 ```
 
-## Algoritmos
+## Grafos
 
-### Grafos
+### Estructuras de datos y funciones de utilidad
 
-#### Busqueda en Amplitud (BFS)
+#### Lista de adyacencia
+
+Tipos de datos
+
+```cpp
+typedef size_t nodo;
+typedef vector<vector<nodo>> adj_list;
+```
+
+#### Matriz de adyacencia
+
+Tipos de datos
+
+```cpp
+
+```cpp
+// Cambiar `valor_matriz` según el tipo de dato que se necesite
+typedef size_t valor_matriz;
+typedef pair<size_t, size_t> coordenada_matriz;
+typedef vector<vector<valor_matriz>> matriz;
+```
+
+Funcion para obtener los vecinos de una coordenada en la matriz
+
+Parametros:
+
+- `u`: coordenada de la matriz
+- `diagonal`: si es `true` se incluyen los vecinos diagonales
+
+Retorna:
+
+- `vecinos`: vector de coordenadas de los vecinos
+
+```cpp
+vector<coordenada_matriz> vecinos_matriz(coordenada_matriz u, bool diagonal = false)
+{
+  auto [i, j] = u;
+
+  vector<coordenada_matriz> diag = {
+      {i + 1, j + 1},
+      {i + -1, j + -1},
+      {i + -1, j + 1},
+      {i + 1, j + -1}};
+
+  vector<coordenada_matriz> cruz = {
+      {i + 1, j},
+      {i + -1, j},
+      {i, j + 1},
+      {i, j + -1},
+  };
+
+  if (diagonal)
+  {
+    cruz.insert(cruz.end(), diag.begin(), diag.end());
+  }
+
+  return cruz;
+}
+```
+
+Función para determinar si una coordenada está dentro de la matriz
+
+```cpp
+bool valid_value(coordenada_matriz u, vector<vector<valor_matriz>> &matriz)
+{
+  auto [i, j] = u; // solo c++17
+  return 0 <= i && i < matriz.size() && 0 <= j && j < matriz.begin()->size();
+}
+```
+
+### Algoritmos
+
+#### Busqueda en Amplitud en Lista de adyacencia(BFS)
 
 El algoritmo de busqueda en amplitud es un algoritmo que permite recorrer o buscar elementos en un grafo.
 
@@ -269,7 +338,7 @@ graph LR
 
 ---
 
-#### Busqueda en Profundidad (DFS)
+#### Busqueda en Profundidad en Lista de adyacencia (DFS)
 
 Version imperativa
 
@@ -375,6 +444,49 @@ graph LR
 ```
 
 ---
+
+#### Busqueda en Profundidad en Matriz de adyacencia (DFS)
+
+Parametros:
+
+- `inicio`: coordenada inicial
+- `matriz`: matriz
+- `visitado`: matriz de visitados
+- `fn_top`: funcion que se ejecuta al visitar un nodo
+- `fn_vecino`: funcion que agrega restricciones a los vecinos
+
+```cpp
+void dfs_matriz(
+    coordenada_matriz inicio,
+    vector<vector<valor_matriz>> &matriz,
+    vector<vector<bool>> &visitado,
+    function<void(coordenada_matriz)> fn_top = [](coordenada_matriz) {},
+    function<bool(coordenada_matriz)> fn_vecino = [](coordenada_matriz)
+    { return true; })
+{
+  stack<coordenada_matriz> pila;
+
+  auto [i0, j0] = inicio;
+  visitado[i0][j0] = true;
+  pila.push(inicio);
+
+  while (!pila.empty())
+  {
+    auto u = pila.top();
+    pila.pop();
+    fn_top(u);
+    for (coordenada_matriz v : vecinos_matriz(u))
+    {
+      auto [vi, vj] = v;
+      if (valid_value(vi, vj, matriz) && fn_vecino(v) && !visitado[vi][vj])
+      {
+        pila.push(v);
+        visitado[vi][vj] = true;
+      }
+    }
+  }
+}
+```
 
 #### Dijkstra
 
