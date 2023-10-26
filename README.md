@@ -1,31 +1,3 @@
-# Programacion Competitiva
-
-Este repositorio contiene algoritmos y utilidades para programación competitiva
-
-## Indice
-
-- [Utilidades](#utilidades)
-  - [Incluir todas las bibliotecas](#incluir-todas-las-bibliotecas)
-  - [Redireccionar entrada y salida a archivos](#redireccionar-entrada-y-salida-a-archivos)
-  - [Leer una linea](#leer-una-linea)
-- [Macros](#macros)
-  - [For loop mas común](#for-loop-mas-común)
-  - [Leer una variable](#leer-una-variable)
-  - [Leer un arreglo](#leer-un-arreglo)
-  - [Leer casos de prueba](#leer-casos-de-prueba)
-  - [Leer variables hasta que termine la entrada](#leer-variables-hasta-que-termine-la-entrada)
-- [Tecnicas](#tecnicas)
-  - [Ordenar un vector/string en orden ascendente/lexicografico](#ordenar-un-vectorstring-en-orden-ascendentelexicografico)
-  - [Ordenar un vector en orden descendente](#ordenar-un-vector-en-orden-descendente)
-  - [Ordenar un vector/string de forma personalizada](#ordenar-un-vectorstring-de-forma-personalizada)
-  - [Permutar un vector/string](#permutar-un-vectorstring)
-- [Algoritmos](#algoritmos)
-  - [Grafos](#grafos)
-    - [Busqueda en Amplitud (BFS)](#busqueda-en-amplitud-bfs)
-    - [Busqueda en Profundidad (DFS)](#busqueda-en-profundidad-dfs)
-    - [Dijkstra](#dijkstra)
-    - [Prim](#prim)
-
 ## Utilidades
 
 ### Incluir todas las bibliotecas
@@ -45,11 +17,14 @@ freopen("output.txt", "w", stdout);
 #endif
 ```
 
-### Leer una linea
+### Desincronizar stdio
+
+La siguiente linea de codigo mejora el rendimiento de la entrada y salida estandar.
+
+Solo se deben usar funciones de entrada y salida estandar de c++ (`cout` y `cin`).
 
 ```cpp
-std::string line;
-std::getline(std::cin, line);
+ios::sync_with_stdio(0);
 ```
 
 ## Macros
@@ -75,43 +50,6 @@ FOR(i, 0, 10) {
 }
 ```
 
-### Leer una variable
-
-Define una variable y lee su valor desde la entrada estandar
-
-```cpp
-#define leer_variable(tipo, nombre) \
-  tipo nombre;                      \
-  std::cin >> nombre
-```
-
-Ejemplo:
-
-```cpp
-leer_variable(int, n);
-std::cout << n << std::endl;
-```
-
-### Leer un arreglo
-
-Define un arreglo de tamaño n y lee sus valores desde la entrada estandar
-
-```cpp
-#define leer_arreglo(tipo, nombre, n) \
-  tipo nombre[n];                     \
-  FOR(i, 0, n)                        \
-  std::cin >> nombre[i]
-```
-
-Ejemplo:
-  
-```cpp
-leer_arreglo(int, a, 5);
-FOR(i, 0, 5) {
-  std::cout << a[i] << std::endl;
-}
-```
-
 ### Leer casos de prueba
 
 Define una variable t y lee su valor desde la entrada estandar,luego hace un ciclo hasta que t llege a 0 (Falso)
@@ -134,7 +72,9 @@ por_cada_caso {
 
 ### Leer variables hasta que termine la entrada
 
-Recibe los mismos parametros que `scanf`, luego lee desde la entrada estandar hasta que llegue a `EOF` (End Of File)
+Recibe los mismos parametros que `scanf`, luego lee desde la entrada estandar hasta que llegue a `EOF` (End Of File).
+
+Nota: `ios::sync_with_stdio(0)` no debe estar en el codigo.
 
 ```cpp
 #define leer_variables_hasta_eof(patron, ...) while (scanf(patron,__VA_ARGS__) != EOF)
@@ -211,7 +151,7 @@ typedef pair<size_t, size_t> coordenada_matriz;
 typedef vector<vector<valor_matriz>> matriz;
 ```
 
-Funcion para obtener los vecinos de una coordenada en la matriz
+#### Vecinos en una Grilla
 
 Parametros:
 
@@ -223,39 +163,31 @@ Retorna:
 - `vecinos`: vector de coordenadas de los vecinos
 
 ```cpp
-vector<coordenada_matriz> vecinos_matriz(coordenada_matriz u, bool diagonal = false)
+typedef pair<int, int> vertice;
+typedef int valor_grilla;
+
+vector<vertice> vecinos_grid(
+    vertice inicio, vector<vector<valor_grilla>> grid, size_t filas, size_t columnas, bool diagonal = false)
 {
-  auto [i, j] = u;
-
-  vector<coordenada_matriz> diag = {
-      {i + 1, j + 1},
-      {i + -1, j + -1},
-      {i + -1, j + 1},
-      {i + 1, j + -1}};
-
-  vector<coordenada_matriz> cruz = {
-      {i + 1, j},
-      {i + -1, j},
-      {i, j + 1},
-      {i, j + -1},
+  auto [f0, c0] = inicio;
+  vector<vertice> vecinos = {
+      {f0 - 1, c0},
+      {f0 + 1, c0},
+      {f0, c0 - 1},
+      {f0, c0 + 1},
   };
-
   if (diagonal)
   {
-    cruz.insert(cruz.end(), diag.begin(), diag.end());
+    vecinos.insert(vecinos.end(), {{f0 - 1, c0 - 1},
+                                   {f0 + 1, c0 + 1},
+                                   {f0 - 1, c0 + 1},
+                                   {f0 + 1, c0 - 1}});
   }
-
-  return cruz;
-}
-```
-
-Función para determinar si una coordenada está dentro de la matriz
-
-```cpp
-bool valid_value(coordenada_matriz u, vector<vector<valor_matriz>> &matriz)
-{
-  auto [i, j] = u; // solo c++17
-  return 0 <= i && i < matriz.size() && 0 <= j && j < matriz.begin()->size();
+  vecinos.erase(remove_if(
+      vecinos.begin(), vecinos.end(),
+      [&](vertice a)
+      { auto [f, c] = a; return (f >= 0 && f < filas && c >= 0 && c < columnas); }));
+  return vecinos;
 }
 ```
 
@@ -594,7 +526,7 @@ while (u != -1)
 
 ```
 
-#### Prim
+#### Prim (Arbol recubridor minimo)
 
 ⚠️ Revisar
 

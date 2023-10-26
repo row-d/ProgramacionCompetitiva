@@ -89,5 +89,11 @@
       "## Index",
       "# Programacion Competitiva"
     ]
-  }
+  },
+  "github.copilot.enable": {
+    "cpp": false,
+    "plaintext": false,
+    "markdown": true,
+    "scminput": false
+},
 }
