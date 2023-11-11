@@ -528,7 +528,48 @@ while (u != -1)
 
 #### Prim (Arbol recubridor minimo)
 
-⚠️ Revisar
+El algoritmo de Prim permite encontrar el arbol recubridor minimo de un grafo.
+
+Parametros:
+
+- `graph`: lista de adyacencia
+- `vertices`: numero de vertices
+Retorna:
+- `min_cost`: costo minimo del arbol recubridor
 
 ```cpp
+typedef int nodo;
+typedef size_t peso;
+typedef pair<peso, nodo> adj_el;
+typedef vector<vector<adj_el>> adj_list;
+typedef priority_queue<adj_el, vector<adj_el>, greater<adj_el>> pq;
+
+peso prim(adj_list &graph, size_t vertices)
+{
+  peso min_cost = 0;
+  vector<bool> visited(vertices, false);
+  pq pqueue;
+  pqueue.push({0, 0});
+
+  while (!pqueue.empty())
+  {
+    auto [u_w, u] = pqueue.top();
+    pqueue.pop();
+    if (visited[u])
+    {
+      continue;
+    }
+    visited[u] = true;
+    min_cost += u_w;
+
+    for (auto [v_w, v] : graph[u])
+    {
+      if (!visited[v])
+      {
+        pqueue.push({v_w, v});
+      }
+    }
+  }
+  return min_cost;
+}
 ```
