@@ -186,12 +186,28 @@ vector<vertice> vecinos_grid(
   vecinos.erase(remove_if(
       vecinos.begin(), vecinos.end(),
       [&](vertice a)
-      { auto [f, c] = a; return (f >= 0 && f < filas && c >= 0 && c < columnas); }));
+      { auto [f, c] = a; return !(f >= 0 && f < filas && c >= 0 && c < columnas); }));
   return vecinos;
 }
 ```
 
 ### Algoritmos
+
+#### Encontrar cantidad de componentes conexas en un Grafo
+
+```cpp
+int countConnectedComponents() {
+        vector<bool> visited(V, false); 
+        int components = 0;
+        for (int i = 0; i < V; ++i) {
+            if (!visited[i]) {
+                DFS(i, visited);
+                components++;
+            }
+        }
+        return components; 
+    }
+```
 
 #### Busqueda en Amplitud en Lista de adyacencia(BFS)
 
@@ -477,12 +493,12 @@ pair<distancias, vector<nodo>> dijkstra(nodo inicio, adj_list grafo, size_t N)
       if (dist[u] + vw < dist[v])
       {
         dist[v] = dist[u] + vw;
-        cola.push(adj_el(dist[v], v));
+        cola.push({dist[v], v});
         predecesor[v] = u;
       }
     }
   }
-  return make_pair(dist, predecesor);
+  return {dist, predecesor};
 }
 ```
 
@@ -494,7 +510,7 @@ graph LR
 0 --2--> 2((2))
 1 --3--> 3((3))
 2 --1--> 0
-2 --3--> 3
+2 --3--> 3  
 3 --1--> 1
 3 --2--> 2
 ```

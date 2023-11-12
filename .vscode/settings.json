@@ -91,7 +91,7 @@
     ]
   },
   "github.copilot.enable": {
-    "cpp": false,
+    "cpp": true,
     "plaintext": false,
     "markdown": true,
     "scminput": false
