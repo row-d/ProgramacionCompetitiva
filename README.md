@@ -151,7 +151,7 @@ typedef pair<size_t, size_t> coordenada_matriz;
 typedef vector<vector<valor_matriz>> matriz;
 ```
 
-#### Vecinos en una Grilla
+#### Vecinos en una Grilla ⚠️ Revisar
 
 Parametros:
 
